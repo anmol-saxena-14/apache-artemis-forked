@@ -82,6 +82,8 @@ public class ProtonProtocolManager extends AbstractProtocolManager<AMQPMessage, 
 
    private final Map<SimpleString, RoutingType> prefixes = new HashMap<>();
 
+   private final Map<SimpleString, RoutingType> temporaryPrefixes = new HashMap<>();
+
    /**
     * minLargeMessageSize determines when a message should be considered as large. minLargeMessageSize = -1 basically
     * disables large message control over AMQP.
@@ -392,8 +394,29 @@ public class ProtonProtocolManager extends AbstractProtocolManager<AMQPMessage, 
    }
 
    @Override
+   public void setTemporaryQueuePrefix(String temporaryQueuePrefix) {
+      for (String prefix : temporaryQueuePrefix.split(",")) {
+         prefixes.put(SimpleString.of(prefix), RoutingType.ANYCAST);
+         temporaryPrefixes.put(SimpleString.of(prefix), RoutingType.ANYCAST);
+      }
+   }
+
+   @Override
+   public void setTemporaryTopicPrefix(String temporaryTopicPrefix) {
+      for (String prefix : temporaryTopicPrefix.split(",")) {
+         prefixes.put(SimpleString.of(prefix), RoutingType.MULTICAST);
+         temporaryPrefixes.put(SimpleString.of(prefix), RoutingType.MULTICAST);
+      }
+   }
+
+   @Override
    public Map<SimpleString, RoutingType> getPrefixes() {
       return prefixes;
+   }
+
+   @Override
+   public Map<SimpleString, RoutingType> getTemporaryPrefixes() {
+      return temporaryPrefixes;
    }
 
    @Override

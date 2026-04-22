@@ -163,6 +163,8 @@ public class OpenWireProtocolManager  extends AbstractProtocolManager<Command, O
 
    private final Map<SimpleString, RoutingType> prefixes = new HashMap<>();
 
+   private final Map<SimpleString, RoutingType> temporaryPrefixes = new HashMap<>();
+
    private final List<OpenWireInterceptor> incomingInterceptors = new ArrayList<>();
    private final List<OpenWireInterceptor> outgoingInterceptors = new ArrayList<>();
 
@@ -687,8 +689,29 @@ public class OpenWireProtocolManager  extends AbstractProtocolManager<Command, O
    }
 
    @Override
+   public void setTemporaryQueuePrefix(String temporaryQueuePrefix) {
+      for (String prefix : temporaryQueuePrefix.split(",")) {
+         prefixes.put(SimpleString.of(prefix), RoutingType.ANYCAST);
+         temporaryPrefixes.put(SimpleString.of(prefix), RoutingType.ANYCAST);
+      }
+   }
+
+   @Override
+   public void setTemporaryTopicPrefix(String temporaryTopicPrefix) {
+      for (String prefix : temporaryTopicPrefix.split(",")) {
+         prefixes.put(SimpleString.of(prefix), RoutingType.MULTICAST);
+         temporaryPrefixes.put(SimpleString.of(prefix), RoutingType.MULTICAST);
+      }
+   }
+
+   @Override
    public Map<SimpleString, RoutingType> getPrefixes() {
       return prefixes;
+   }
+
+   @Override
+   public Map<SimpleString, RoutingType> getTemporaryPrefixes() {
+      return temporaryPrefixes;
    }
 
    @Override
