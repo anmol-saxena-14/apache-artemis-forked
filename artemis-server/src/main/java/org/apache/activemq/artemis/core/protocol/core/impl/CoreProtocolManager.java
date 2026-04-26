@@ -230,16 +230,16 @@ public class CoreProtocolManager implements ProtocolManager<Interceptor, ActiveM
    }
 
    @Override
-   public void setTemporaryQueuePrefix(String temporaryQueuePrefix) {
-      for (String prefix : temporaryQueuePrefix.split(",")) {
+   public void setTemporaryAnycastPrefix(String temporaryAnycastPrefix) {
+      for (String prefix : temporaryAnycastPrefix.split(",")) {
          prefixes.put(SimpleString.of(prefix), RoutingType.ANYCAST);
          temporaryPrefixes.put(SimpleString.of(prefix), RoutingType.ANYCAST);
       }
    }
 
    @Override
-   public void setTemporaryTopicPrefix(String temporaryTopicPrefix) {
-      for (String prefix : temporaryTopicPrefix.split(",")) {
+   public void setTemporaryMulticastPrefix(String temporaryMulticastPrefix) {
+      for (String prefix : temporaryMulticastPrefix.split(",")) {
          prefixes.put(SimpleString.of(prefix), RoutingType.MULTICAST);
          temporaryPrefixes.put(SimpleString.of(prefix), RoutingType.MULTICAST);
       }

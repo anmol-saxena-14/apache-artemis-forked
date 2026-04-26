@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Integration tests for the temporaryQueuePrefix and temporaryTopicPrefix acceptor parameters.
+ * Integration tests for the temporaryAnycastPrefix and temporaryMulticastPrefix acceptor parameters.
  *
  * These prefixes allow STOMP clients to subscribe to destinations using a well-known prefix
  * (e.g. /temp-queue/ or /temp-topic/) to create temporary resources that are automatically
@@ -72,7 +72,7 @@ public class StompTemporaryPrefixTest extends StompTestBase {
 
       server.getRemotingService().createAcceptor("test",
          "tcp://" + hostname + ":" + TEST_PORT + "?protocols=" + StompProtocolManagerFactory.STOMP_PROTOCOL_NAME
-            + "&temporaryQueuePrefix=" + TEMP_QUEUE_PREFIX).start();
+            + "&temporaryAnycastPrefix=" + TEMP_QUEUE_PREFIX).start();
 
       StompClientConnection conn = StompClientConnectionFactory.createClientConnection(uri);
       conn.connect(defUser, defPass);
@@ -85,8 +85,8 @@ public class StompTemporaryPrefixTest extends StompTestBase {
       assertEquals(receiptId, frame.getHeader(Stomp.Headers.Response.RECEIPT_ID));
 
       org.apache.activemq.artemis.core.server.Queue queue = server.locateQueue(SimpleString.of(address));
-      assertNotNull(queue, "Subscribing with temporaryQueuePrefix should create an ANYCAST queue");
-      assertTrue(queue.isTemporary(), "Queue created by temporaryQueuePrefix should be temporary");
+      assertNotNull(queue, "Subscribing with temporaryAnycastPrefix should create an ANYCAST queue");
+      assertTrue(queue.isTemporary(), "Queue created by temporaryAnycastPrefix should be temporary");
       assertEquals(RoutingType.ANYCAST, queue.getRoutingType());
 
       conn.disconnect();
@@ -99,7 +99,7 @@ public class StompTemporaryPrefixTest extends StompTestBase {
 
       server.getRemotingService().createAcceptor("test",
          "tcp://" + hostname + ":" + TEST_PORT + "?protocols=" + StompProtocolManagerFactory.STOMP_PROTOCOL_NAME
-            + "&temporaryQueuePrefix=" + TEMP_QUEUE_PREFIX).start();
+            + "&temporaryAnycastPrefix=" + TEMP_QUEUE_PREFIX).start();
 
       StompClientConnection conn = StompClientConnectionFactory.createClientConnection(uri);
       conn.connect(defUser, defPass);
@@ -125,7 +125,7 @@ public class StompTemporaryPrefixTest extends StompTestBase {
 
       server.getRemotingService().createAcceptor("test",
          "tcp://" + hostname + ":" + TEST_PORT + "?protocols=" + StompProtocolManagerFactory.STOMP_PROTOCOL_NAME
-            + "&temporaryQueuePrefix=" + TEMP_QUEUE_PREFIX).start();
+            + "&temporaryAnycastPrefix=" + TEMP_QUEUE_PREFIX).start();
 
       StompClientConnection conn = StompClientConnectionFactory.createClientConnection(uri);
       conn.connect(defUser, defPass);
@@ -158,7 +158,7 @@ public class StompTemporaryPrefixTest extends StompTestBase {
 
       server.getRemotingService().createAcceptor("test",
          "tcp://" + hostname + ":" + TEST_PORT + "?protocols=" + StompProtocolManagerFactory.STOMP_PROTOCOL_NAME
-            + "&temporaryTopicPrefix=" + TEMP_TOPIC_PREFIX).start();
+            + "&temporaryMulticastPrefix=" + TEMP_TOPIC_PREFIX).start();
 
       StompClientConnection conn = StompClientConnectionFactory.createClientConnection(uri);
       conn.connect(defUser, defPass);
@@ -171,9 +171,9 @@ public class StompTemporaryPrefixTest extends StompTestBase {
       assertEquals(receiptId, frame.getHeader(Stomp.Headers.Response.RECEIPT_ID));
 
       AddressInfo addressInfo = server.getAddressInfo(SimpleString.of(address));
-      assertNotNull(addressInfo, "Subscribing with temporaryTopicPrefix should create an address");
+      assertNotNull(addressInfo, "Subscribing with temporaryMulticastPrefix should create an address");
       assertTrue(addressInfo.getRoutingTypes().contains(RoutingType.MULTICAST),
-         "Address created by temporaryTopicPrefix should support MULTICAST routing");
+         "Address created by temporaryMulticastPrefix should support MULTICAST routing");
 
       // A temporary MULTICAST queue (with a UUID name) should be bound to the address
       Collection<Binding> bindings = server.getPostOffice().getDirectBindings(SimpleString.of(address));
@@ -195,7 +195,7 @@ public class StompTemporaryPrefixTest extends StompTestBase {
 
       server.getRemotingService().createAcceptor("test",
          "tcp://" + hostname + ":" + TEST_PORT + "?protocols=" + StompProtocolManagerFactory.STOMP_PROTOCOL_NAME
-            + "&temporaryTopicPrefix=" + TEMP_TOPIC_PREFIX).start();
+            + "&temporaryMulticastPrefix=" + TEMP_TOPIC_PREFIX).start();
 
       StompClientConnection conn = StompClientConnectionFactory.createClientConnection(uri);
       conn.connect(defUser, defPass);
@@ -221,7 +221,7 @@ public class StompTemporaryPrefixTest extends StompTestBase {
 
       server.getRemotingService().createAcceptor("test",
          "tcp://" + hostname + ":" + TEST_PORT + "?protocols=" + StompProtocolManagerFactory.STOMP_PROTOCOL_NAME
-            + "&temporaryTopicPrefix=" + TEMP_TOPIC_PREFIX).start();
+            + "&temporaryMulticastPrefix=" + TEMP_TOPIC_PREFIX).start();
 
       StompClientConnection conn = StompClientConnectionFactory.createClientConnection(uri);
       conn.connect(defUser, defPass);
@@ -255,8 +255,8 @@ public class StompTemporaryPrefixTest extends StompTestBase {
 
       server.getRemotingService().createAcceptor("test",
          "tcp://" + hostname + ":" + TEST_PORT + "?protocols=" + StompProtocolManagerFactory.STOMP_PROTOCOL_NAME
-            + "&temporaryQueuePrefix=" + TEMP_QUEUE_PREFIX
-            + "&temporaryTopicPrefix=" + TEMP_TOPIC_PREFIX).start();
+            + "&temporaryAnycastPrefix=" + TEMP_QUEUE_PREFIX
+            + "&temporaryMulticastPrefix=" + TEMP_TOPIC_PREFIX).start();
 
       StompClientConnection conn = StompClientConnectionFactory.createClientConnection(uri);
       conn.connect(defUser, defPass);
@@ -302,7 +302,7 @@ public class StompTemporaryPrefixTest extends StompTestBase {
 
       server.getRemotingService().createAcceptor("test",
          "tcp://" + hostname + ":" + TEST_PORT + "?protocols=" + StompProtocolManagerFactory.STOMP_PROTOCOL_NAME
-            + "&temporaryQueuePrefix=" + TEMP_QUEUE_PREFIX
+            + "&temporaryAnycastPrefix=" + TEMP_QUEUE_PREFIX
             + "&anycastPrefix=/queue/").start();
 
       StompClientConnection conn = StompClientConnectionFactory.createClientConnection(uri);
@@ -316,7 +316,7 @@ public class StompTemporaryPrefixTest extends StompTestBase {
          .addHeader(Stomp.Headers.RECEIPT_REQUESTED, receiptId);
       frame = conn.sendFrame(frame);
       assertEquals(receiptId, frame.getHeader(Stomp.Headers.Response.RECEIPT_ID),
-         "Regular subscription with anycastPrefix should still work alongside temporaryQueuePrefix");
+         "Regular subscription with anycastPrefix should still work alongside temporaryAnycastPrefix");
 
       send(conn, "/queue/" + getQueueName(), null, "Hello Regular", true);
 
